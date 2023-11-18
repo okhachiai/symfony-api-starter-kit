@@ -1,0 +1,56 @@
+version: '3.9'
+
+services:
+
+    database:
+        image: ${DATABASE_DRIVER}:${DATABASE_VERSION}
+        environment:
+            POSTGRES_DB: ${DATABASE_NAME}
+            POSTGRES_USER: ${DATABASE_USER}
+            POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+        volumes:
+            - postgres-data:/var/lib/postgresql/data
+        ports:
+            - ${DATABASE_PORTS}
+        networks:
+            - app-network
+
+    php:
+        build:
+            context: ./docker/php
+            args:
+                UID: ${UID}
+                DEVELOPER_EMAIL: ${DEVELOPER_EMAIL}
+                DEVELOPER_NAME: ${DEVELOPER_NAME}
+                ENABLE_PHP_XDEBUG: ${ENABLE_PHP_XDEBUG}
+        ports:
+            - ${FPM_PORTS}
+        volumes:
+            - .:/var/app/current:cached
+            - ./var/log:/var/log:cached
+        depends_on:
+            - database
+        networks:
+            - app-network
+
+    server:
+        build:
+            context: ./docker/server/${SERVER_NAME}
+            args:
+                UID: ${UID}
+        ports:
+            - ${SERVER_PORTS}
+            - ${SERVER_PORTS_TLS}
+        volumes:
+            - .:/var/app/current:cached
+            - ./var/log:/var/log/nginx:cached
+        depends_on:
+            - php
+        networks:
+            - app-network
+
+volumes:
+    postgres-data:
+
+networks:
+    app-network:
