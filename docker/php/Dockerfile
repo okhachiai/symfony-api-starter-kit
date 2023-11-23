@@ -16,10 +16,11 @@ RUN echo "alias sf=/var/app/current/bin/console" >> /home/webapp/.bashrc
 
 # Install packages and PHP extensions
 RUN apt update \
+    && apt install -y libpq-dev \
     # common libraries and extensions
     && apt install -y git acl openssl openssh-client wget zip \
     && apt install -y libpng-dev zlib1g-dev libzip-dev libxml2-dev libicu-dev \
-    && docker-php-ext-install intl pdo zip bcmath sockets \
+    && docker-php-ext-install intl pdo pdo_pgsql zip bcmath sockets \
     # for MySQL
     && docker-php-ext-install pdo_mysql \
     && apt install -y vim libssh-dev \
@@ -27,6 +28,8 @@ RUN apt update \
     && pecl install apcu \
     # enable Docker extensions
     && docker-php-ext-enable --ini-name 05-opcache.ini opcache apcu
+
+RUN docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql
 
 # Install and update composer
 RUN curl https://getcomposer.org/composer.phar -o /usr/bin/composer && chmod +x /usr/bin/composer
@@ -52,6 +55,8 @@ RUN mkdir -p /var/app
 
 RUN git config --global user.email "${DEVELOPER_EMAIL}"
 RUN git config --global user.name "${DEVELOPER_NAME}"
+
+RUN chown -R webapp:webapp /var/app
 
 WORKDIR /var/app/current
 

@@ -2,20 +2,33 @@ version: '3.9'
 
 services:
 
-    database:
+    api_database:
         image: ${DATABASE_DRIVER}:${DATABASE_VERSION}
         environment:
             POSTGRES_DB: ${DATABASE_NAME}
             POSTGRES_USER: ${DATABASE_USER}
             POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
         volumes:
-            - postgres-data:/var/lib/postgresql/data
+            - api-postgres-data:/var/lib/postgresql/data
         ports:
             - ${DATABASE_PORTS}
         networks:
-            - app-network
+            - api-network
 
-    php:
+    api_database_test:
+        image: ${DATABASE_DRIVER}:${DATABASE_VERSION}
+        environment:
+            POSTGRES_DB: ${TEST_DATABASE_NAME}
+            POSTGRES_USER: ${DATABASE_USER}
+            POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+        volumes:
+            - api-postgres-data-test:/var/lib/postgresql/data
+        ports:
+            - ${TEST_DATABASE_PORTS}
+        networks:
+            - api-network
+
+    api_php:
         build:
             context: ./docker/php
             args:
@@ -29,11 +42,11 @@ services:
             - .:/var/app/current:cached
             - ./var/log:/var/log:cached
         depends_on:
-            - database
+            - api_database
         networks:
-            - app-network
+            - api-network
 
-    server:
+    api_server:
         build:
             context: ./docker/server/${SERVER_NAME}
             args:
@@ -45,12 +58,13 @@ services:
             - .:/var/app/current:cached
             - ./var/log:/var/log/nginx:cached
         depends_on:
-            - php
+            - api_php
         networks:
-            - app-network
+            - api-network
 
 volumes:
-    postgres-data:
+    api-postgres-data:
+    api-postgres-data-test:
 
 networks:
-    app-network:
+    api-network:
