@@ -2,8 +2,7 @@
 
 OS = $(shell uname)
 UID = $(shell id -u)
-DOCKER_PHP = symfony-api-starter-kit-php-1
-DOCKER_FRONT = symfony-api-starter-kit-vuejs
+DOCKER_PHP = symfony-api-starter-kit-api_php-1
 SYMFONY_CONSOLE = docker exec --user ${UID} ${DOCKER_PHP} sf
 
 help: ## Show this help message
@@ -21,7 +20,7 @@ init: ## Init the application for the first time
 	U_ID=${UID} docker-compose build || true
 	U_ID=${UID} docker-compose up -d || true
 	U_ID=${UID} docker exec -it ${DOCKER_PHP} symfony new .
-	cp -n .env.dist ./api/.env || true
+	cp -n .env.dist .env || true
 
 
 install: ## Install the application
@@ -34,12 +33,11 @@ install: ## Install the application
 
 db-refresh: ## Refresh the database with fixtures data
     U_ID=${UID} ${SYMFONY_CONSOLE} doctrine:database:drop --force
+    U_ID=${UID} ${SYMFONY_CONSOLE} doctrine:database:create
 
 start: ## Start the containers
-	docker network create api-network || true
 	cp -n .env.dist .env || true
 	U_ID=${UID} docker-compose up -d || true
-	#docker run -p 3001:3000 ${DOCKER_FRONT}
 
 stop: ## Stop the containers
 	U_ID=${UID} docker-compose stop

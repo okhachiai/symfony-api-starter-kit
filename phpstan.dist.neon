@@ -4,5 +4,6 @@ parameters:
         - src
     excludes_analyse:
         - src/Migrations/*
+        - tests/*
     checkMissingIterableValueType: false
     checkGenericClassInNonGenericObjectType: false

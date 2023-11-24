@@ -67,33 +67,33 @@ grumphp:
             ignore_patterns: [ ]
             clear_cache: true
             no_diffs: false
-        phpmd:
-            whitelist_patterns: [ ]
-            exclude: [ ]
-            report_format: text
-            ruleset: [ 'cleancode', 'codesize', 'naming' ]
-            triggered_by: [ 'php' ]
-        phpmnd:
-            directory: ./src
-            whitelist_patterns: [ ]
-            exclude: [ ]
-            exclude_name: [ ]
-            exclude_path: [ ]
-            extensions:
-                - argument
-                - array
-                - assign
-                - default_parameter
-                - operation
-                - property
-                - condition
-                - switch_case
-            hint: false
-            ignore_funcs: [ ]
-            ignore_numbers: [ ]
-            ignore_strings: [ ]
-            strings: false
-            triggered_by: [ 'php' ]
+#        phpmd:
+#            whitelist_patterns: [ ]
+#            exclude: [ ]
+#            report_format: text
+#            ruleset: [ 'cleancode', 'codesize', 'naming' ]
+#            triggered_by: [ 'php' ]
+#        phpmnd:
+#            directory: ./src
+#            whitelist_patterns: [ ]
+#            exclude: [ ]
+#            exclude_name: [ ]
+#            exclude_path: [ ]
+#            extensions:
+#                - argument
+#                - array
+#                - assign
+#                - default_parameter
+#                - operation
+#                - property
+#                - condition
+#                - switch_case
+#            hint: false
+#            ignore_funcs: [ ]
+#            ignore_numbers: [ ]
+#            ignore_strings: [ ]
+#            strings: false
+#            triggered_by: [ 'php' ]
         clover_coverage:
             clover_file: ./clover.xml
             level: 80
