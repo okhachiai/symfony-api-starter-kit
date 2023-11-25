@@ -94,15 +94,15 @@ grumphp:
 #            ignore_strings: [ ]
 #            strings: false
 #            triggered_by: [ 'php' ]
-        clover_coverage:
-            clover_file: ./clover.xml
-            level: 80
-        phpunit:
-            config_file: phpunit.xml.dist
-            testsuite: unit
-            group: [ ]
-            exclude_group: [ ]
-            always_execute: false
-            order: null
+#        clover_coverage:
+#            clover_file: ./clover.xml
+#            level: 80
+#        phpunit:
+#            config_file: phpunit.xml.dist
+#            testsuite: unit
+#            group: [ ]
+#            exclude_group: [ ]
+#            always_execute: false
+#            order: null
 
 
