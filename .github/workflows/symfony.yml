@@ -1,0 +1,65 @@
+name: Symfony
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  Quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: shivammathur/setup-php@2cb9b829437ee246e9b3cac53555a39208ca6d28
+        with:
+          php-version: '8.2'
+      - uses: actions/checkout@v3
+      - name: Copy .env file
+        run: php -r "file_exists('.env.local') || copy('.env.dist', '.env.local');"
+      - name: Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-
+      - name: Install Dependencies
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+      - name: Add symfony cli APT based Linux
+        run: curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.deb.sh' | sudo -E bash
+      - name: Install symfony executable
+        run: sudo apt install symfony-cli
+      - name: Execute GrumPHP
+        run: vendor/bin/grumphp run
+
+  Tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: shivammathur/setup-php@2cb9b829437ee246e9b3cac53555a39208ca6d28
+        with:
+          php-version: '8.2'
+      - uses: actions/checkout@v3
+      - name: Copy .env.test
+        run: php -r "file_exists('.env.test') || copy('.env.dist', '.env.test');"
+      - name: Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-
+      - name: Install Dependencies
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+      - name: Create Database
+        run: |
+          mkdir -p data
+          touch data/database.sqlite
+      - name: Execute PHPUnit tests
+        env:
+          TEST_DATABASE_URL: sqlite:///%kernel.project_dir%/data/database.sqlite
+        run: vendor/bin/phpunit

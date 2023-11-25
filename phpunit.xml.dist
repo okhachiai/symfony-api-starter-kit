@@ -8,7 +8,7 @@
   <php>
     <ini name="error_reporting" value="-1"/>
     <env name="APP_ENV" value="test"/>
-    <env name="DATABASE_URL" value="sqlite:///:memory:"/>
+    <env name="TEST_DATABASE_URL" value="postgresql://apidb:apidb@api_database_test:5432/api_database_test"/>
     <server name="KERNEL_CLASS" value="App\Kernel" />
   </php>
   <testsuites>
